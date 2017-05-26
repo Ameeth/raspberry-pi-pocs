@@ -2,7 +2,7 @@ import os
 import sqlite3, json
 from home import app
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, jsonify
+     render_template, flash, jsonify, make_response
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
@@ -187,3 +187,40 @@ def tv_channel_previous():
 def tv_go_back():
     remote.go_back()
     return jsonify( {"sucess":True})
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    req = request.get_json(silent=True, force=True)
+
+    print("Request:")
+    print(json.dumps(req, indent=4))
+
+    res = processRequest(req)
+
+    res = json.dumps(res, indent=4)
+    # print(res)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
+
+def processRequest(req):
+    if req.get("result").get("action") != "switch-on-tv":
+        return {}
+    res = makeWebhookResult(tv_onoff())
+    return res
+
+def makeWebhookResult(data):
+    # print(json.dumps(item, indent=4))
+
+    speech = "Switching on the tv"
+
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "apiai-home-automation-sample"
+}
