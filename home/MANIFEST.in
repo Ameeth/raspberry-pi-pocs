@@ -1,0 +1,3 @@
+graft home/templates
+graft home/static
+include home/schema.sql

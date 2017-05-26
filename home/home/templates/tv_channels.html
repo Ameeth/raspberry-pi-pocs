@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  {% if session.logged_in %}
+  <div class="panel panel-default">
+      <div class="panel-heading">Remote Buttons</div>
+      <div class="panel-body">
+          <div class="row">
+              <button id="power" type="button" class="btn btn-default btn-sm"><i class="fa fa-power-off" style="color:red;"></i></button>
+              <button id="channelup" type="button" class="btn btn-default btn-sm"><i class="fa fa-plus"></i></button>
+              <button id="channeldown" type="button" class="btn btn-default btn-sm"><i class="fa fa-minus"></i></button>
+          </div>
+          <div class="row">
+              <button id="mute" type="button" class="btn btn-default btn-sm"><i class="fa fa-volume-off"></i></button>
+              <button id="volumeup" type="button" class="btn btn-default btn-sm"><i class="fa fa-volume-up"></i></button>
+              <button id="volumedown" type="button" class="btn btn-default btn-sm"><i class="fa fa-volume-down"></i></button>
+          </div>
+          <div class="row">
+              <button id="back" type="button" class="btn btn-default btn-sm"><i class="fa fa-undo"></i></button>
+          </div>
+      </div>
+  </div>
+  <div class="panel panel-default">
+      <div class="panel-heading">Recent Channels</div>
+      <div class="panel-body">
+          <table class="table table-bordered table-hover" id="tvJsonRecent">
+          <thead>
+              <tr class='clickable-row'>
+                  <th>Channel Name</th>
+                  <th>Channel No</th>
+                  <th>Genre</th>
+                  <th>Select</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel panel-default">
+      <div class="panel-heading">All Channels</div>
+      <div class="panel-body">
+    <table class="table table-bordered table-hover" id="tvJson">
+        <thead>
+            <tr class='clickable-row'>
+                <th>Channel Name</th>
+                <th>Channel No</th>
+                <th>Genre</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        $('#power').on('click', function(event) {
+              $.getJSON('/tv_onoff', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#channelup').on('click', function(event) {
+              $.getJSON('/tv_channel_next', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#channeldown').on('click', function(event) {
+              $.getJSON('/tv_channel_previous', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#mute').on('click', function(event) {
+              $.getJSON('/tv_mute', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#volumeup').on('click', function(event) {
+              $.getJSON('/tv_volumeup', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#volumedown').on('click', function(event) {
+              $.getJSON('/tv_volumedown', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#back').on('click', function(event) {
+              $.getJSON('/tv_go_back', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $(document).ready(function() {
+
+            var table2 = $('#tvJsonRecent').DataTable({
+                ajax: {
+                    url:'/recent_channel_json', dataSrc: ''
+                },
+                columns: [
+                    { data: 'channelName' },
+                    { data: 'channelNo' },
+                    { data: 'genre' },
+                    { data: null, targets:-1, defaultContent: '<button type="button" class="btn btn-default btn-sm"><i class="fa fa-check"></i></button>' }
+                ]
+            } );
+            $('#tvJsonRecent tbody').on( 'click', 'button', function () {
+                var rowData = table2.row( $(this).parents('tr') ).data();
+                console.log(rowData.channelNo);
+                $.getJSON('/switch-channel/'+rowData.channelNo, function(data) {
+                    console.log(data.channelno);
+                });
+                return false;
+            } );
+
+
+
+            var table = $('#tvJson').DataTable({
+                ajax: {
+                    url:'/channel_json', dataSrc: ''
+                },
+                columns: [
+                    { data: 'channelName' },
+                    { data: 'channelNo' },
+                    { data: 'genre' },
+                    { data: null, targets:-1, defaultContent: '<button type="button" class="btn btn-default btn-sm"><i class="fa fa-check"></i></button>' }
+                ]
+            } );
+            $('#tvJson tbody').on( 'click', 'button', function () {
+                var rowData = table.row( $(this).parents('tr') ).data();
+                console.log(rowData.channelNo);
+                $.getJSON('/switch-channel/'+rowData.channelNo, function(data) {
+                    console.log(data.channelno);
+                });
+                table2.ajax.reload();
+                return false;
+            } );
+
+        } );
+    </script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  {% if session.logged_in %}
+    <div class="panel">
+        <div class="row">
+            <button id="green" type="button" class="btn btn-block btn-success">Green</button>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="row">
+            <button id="blue" type="button" class="btn btn-block btn-primary">Blue</button>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="row">
+            <button id="red" type="button" class="btn btn-block btn-danger">Red</button>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="row">
+            <button id="off" type="button" class="btn btn-block">Off</button>
+        </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $('#green').on('click', function(event) {
+              $.getJSON('/led-glow/green', function(data) {
+                console.log(data);
+              });
+              return false;
+        });
+        $('#blue').on('click', function(event) {
+            $.getJSON('/led-glow/blue', function(data) {
+              console.log(data);
+            });
+            return false;
+        });
+        $('#red').on('click', function(event) {
+            $.getJSON('/led-glow/red', function(data) {
+              console.log(data);
+            });
+            return false;
+        });
+        $('#off').on('click', function(event) {
+            $.getJSON('/led-switchoff', function(data) {
+              console.log(data);
+            });
+            return false;
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  {% if session.logged_in %}
+    <table class="table table-bordered table-hover" id="tvChannels">
+        <thead>
+            <tr>
+                <th>Channel Name</th>
+                <th>Channel No</th>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr class='clickable-row'>
+                    <td>{{ entry.channel_name }}</td>
+                    <td>{{ entry.channel_no}}</td>
+                    <td>{{ entry.genre}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table table-bordered table-hover" id="tvJson">
+        <thead>
+            <tr class='clickable-row'>
+                <th>Channel Name</th>
+                <th>Channel No</th>
+                <th>Genre</th>
+            </tr>
+        </thead>
+    </table>
+
+  {% endif %}
+
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#tvChannels').DataTable();
+
+            $('#tvChannels').bootstrapTable({
+                onClickRow: function (row, $element) {
+                    console.log(row[1]);
+                    $.getJSON('/switch-channel/'+row[1], function(data) {
+                        console.log(data.channelno);
+                      });
+                      return false;
+                }
+            });
+            $('#tvChannels').on('click', '.clickable-row', function(event) {
+              $(this).addClass('active').siblings().removeClass('active');
+            });
+
+            $('#tvJson').DataTable({
+                ajax: {
+                    url:'/channel_json', dataSrc: ''
+                },
+                columns: [
+                    { data: 'channelName' },
+                    { data: 'channelNo' },
+                    { data: 'genre' }
+                ]
+            } );
+
+            $('#tvJson').bootstrapTable({
+                onClickRow: function (row, $element) {
+                    console.log(row[1]);
+                    $.getJSON('/switch-channel/'+row[1], function(data) {
+                        console.log(data.channelno);
+                      });
+                      return false;
+                }
+            });
+            $('#tvJson').on('click', '.clickable-row', function(event) {
+              $(this).addClass('active').siblings().removeClass('active');
+            });
+
+        } );
+    </script>
+{% endblock %}
