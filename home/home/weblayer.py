@@ -23,8 +23,6 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'home.db')
 ))
 
-app.config.from_envvar('HOME_SETTINGS', silent=True)
-
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])
