@@ -24,6 +24,11 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'home.db')
 ))
 
+logHandler = logging.FileHandler('/var/log/home_automation.log')
+logHandler.setLevel(logging.INFO)
+app.logger.addHandler(logHandler)
+app.logger.setLevel(logging.INFO)
+
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])
@@ -52,7 +57,7 @@ def init_db():
 
 def dynamic_navbar():
     navbar = Navbar('Home')
-    print("Session " + str(session.get('logged_in')))
+    app.logger.info("Session " + str(session.get('logged_in')))
     if  session.get('logged_in'):
         navbar.items = [View('TV', 'channel_list')]
         navbar.items.append(View('LED', 'led_demo'))
@@ -225,8 +230,3 @@ def makeWebhookResult(data):
         # "contextOut": [],
         "source": "apiai-home-automation-sample"
 }
-
-if __name__ == '__main__':
-    handler = RotatingFileHandler('home_automation.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
