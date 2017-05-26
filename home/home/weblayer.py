@@ -7,7 +7,8 @@ from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
 from home import gpio, tvchannel, remote
-
+import logging
+from logging.handlers import RotatingFileHandler
 
 nav = Nav()
 
@@ -145,7 +146,7 @@ def led_switchoff():
 
 @app.route('/switch-channel/<channelno>')
 def switch_channel(channelno):
-    print("Channel Switch Called " + channelno)
+    app.logger.info("Channel Switch Called " + channelno)
     remote.goto_channel(channelno)
     if(len(RECENT_CHANNELS) >= 5):
         RECENT_CHANNELS.pop()
@@ -192,8 +193,8 @@ def tv_go_back():
 def webhook():
     req = request.get_json(silent=True, force=True)
 
-    print("Request:")
-    print(json.dumps(req, indent=4))
+    app.logger.info("Request:")
+    app.logger.info(json.dumps(req, indent=4))
 
     res = processRequest(req)
 
@@ -214,8 +215,8 @@ def makeWebhookResult(data):
 
     speech = "Switching on the tv"
 
-    print("Response:")
-    print(speech)
+    app.logger.info("Response:")
+    app.logger.info(speech)
 
     return {
         "speech": speech,
@@ -224,3 +225,8 @@ def makeWebhookResult(data):
         # "contextOut": [],
         "source": "apiai-home-automation-sample"
 }
+
+if __name__ == '__main__':
+    handler = RotatingFileHandler('home_automation.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
