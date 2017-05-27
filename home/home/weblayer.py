@@ -211,6 +211,7 @@ def webhook():
 
 def processRequest(req):
     parameters = req.get("result").get("parameters")
+    app.logger.info("Got parameters :" + parameters)
     if parameters.get("device") == "tv":
         operation = parameters.get("operation")
         if operation == "switch on" or operation == "switch off":
