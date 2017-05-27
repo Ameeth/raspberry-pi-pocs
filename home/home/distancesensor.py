@@ -1,11 +1,11 @@
 from gpiozero import DistanceSensor, PWMLED
-from signal import pause
+from time import sleep
 
 def measure_distance():
-    sensor = DistanceSensor(4, 17, max_distance=2)
+    sensor = DistanceSensor( 17, 4, max_distance=1)
     led = PWMLED(22)
     while True:
-        led.value = sensor.distance/2
+        led.value = 1.0 - sensor.distance
         sleep(1)
 
 if __name__ == "__main__":
