@@ -6,7 +6,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'flask', 'flask-bootstrap','flask-nav'
-        ,'RPi.GPIO','py-irsend'
+        ,'RPi.GPIO','py-irsend', 'gpiozero'
     ],
     setup_requires=[
         'pytest-runner',
