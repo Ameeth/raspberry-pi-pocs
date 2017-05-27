@@ -32,7 +32,7 @@ insert into tv_channel (channel_no, channel_name, genre) values (1640, 'Raj News
 insert into tv_channel (channel_no, channel_name, genre) values (1299, 'DD Sahyadri', 'Marathi Regional');
 insert into tv_channel (channel_no, channel_name, genre) values (1203, 'Colors Marathi HD', 'Marathi Regional');
 insert into tv_channel (channel_no, channel_name, genre) values (1204, 'Colors Marathi', 'Marathi Regional');
-insert into tv_channel (channel_no, channel_name, genre) values (1208, 'Zee Marathi', 'Marathi Regional');
+insert into tv_channel (channel_no, channel_name, genre) values (1207, 'Zee Marathi', 'Marathi Regional');
 insert into tv_channel (channel_no, channel_name, genre) values (1209, 'Star Pravah HD', 'Marathi Regional');
 insert into tv_channel (channel_no, channel_name, genre) values (1210, 'STAR Pravah', 'Marathi Regional');
 insert into tv_channel (channel_no, channel_name, genre) values (1213, 'ABP Majha', 'Marathi Regional');
