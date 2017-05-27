@@ -194,6 +194,14 @@ def tv_go_back():
     remote.go_back()
     return jsonify( {"sucess":True})
 
+def change_channel_by_name(name):
+    db = get_db()
+    placeholder= '?' # For SQLite. See DBAPI paramstyle.
+    query= 'select channel_no from tv_channel where channel_name = %s'  % placeholders
+    cur = db.execute(query, name)
+    entries = cur.fetchall()
+    listoflist = []
+    switch_channel(entries[0][0])
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
@@ -211,10 +219,15 @@ def processRequest(req):
     app.logger.info(json.dumps(parameters, indent=4))
     if parameters.get("device") == "tv":
         operation = parameters.get("operation")
-        if operation == "switch on" or operation == "switch off":
+        if operation == "switch off":
             return makeWebhookResult(tv_onoff())
-        if operation == "mute" :
+        elif operation == "mute" :
             return makeWebhookResult(tv_mute())
+        elif operation == "switch on":
+            if parameters.get("channel") is None or not parameters.get("channel"):
+                return makeWebhookResult(tv_onoff())
+            else :
+                return makeWebhookResult(change_channel_by_name(parameters.get("channel")))
     return {}
 
 def makeWebhookResult(data):
