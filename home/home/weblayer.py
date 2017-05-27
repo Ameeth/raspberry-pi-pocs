@@ -197,10 +197,6 @@ def tv_go_back():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-
-    app.logger.info("Request:")
-    app.logger.info(json.dumps(req, indent=4))
-
     res = processRequest(req)
 
     res = json.dumps(res, indent=4)
@@ -211,7 +207,8 @@ def webhook():
 
 def processRequest(req):
     parameters = req.get("result").get("parameters")
-    app.logger.info("Got parameters :" + parameters)
+    app.logger.info("Got parameters :")
+    app.logger.info(json.dumps(parameters, indent=4))
     if parameters.get("device") == "tv":
         operation = parameters.get("operation")
         if operation == "switch on" or operation == "switch off":
