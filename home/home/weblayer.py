@@ -24,7 +24,7 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'home.db')
 ))
 
-logHandler = logging.FileHandler('/var/log/home_automation.log')
+logHandler = logging.FileHandler('home_automation.log')
 logHandler.setLevel(logging.INFO)
 app.logger.addHandler(logHandler)
 app.logger.setLevel(logging.INFO)
@@ -74,7 +74,7 @@ nav.init_app(app)
 def initdb_command():
     """Initializes the database."""
     init_db()
-    print('Initialized the database.')
+    app.logger.info('Initialized the database.')
 
 @app.route('/')
 def index():
