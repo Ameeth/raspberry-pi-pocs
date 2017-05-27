@@ -6,7 +6,7 @@ LGTV_REMOTE_NAME = 'LG_TV'
 def sendKeyStrokes(remoteName, keyStrokes):
     print(keyStrokes)
     irsend.send_once(remoteName, keyStrokes)
-    time.sleep(1)
+    time.sleep(0.1)
 
 def goto_channel(channel_no):
     keyStrokes = []
@@ -56,14 +56,14 @@ def volume_down_tv():
 def channel_up():
     keyStrokes = []
     keyStrokes.append('KEY_CHANNELUP')
-    sendKeyStrokes(keyStrokes)
+    sendKeyStrokes(TATASKY_REMOTE_NAME, keyStrokes)
 
 def channel_down():
     keyStrokes = []
     keyStrokes.append('KEY_CHANNELDOWN')
-    sendKeyStrokes(keyStrokes)
+    sendKeyStrokes(TATASKY_REMOTE_NAME, keyStrokes)
 
 def go_back():
     keyStrokes = []
     keyStrokes.append('KEY_BACK')
-    sendKeyStrokes(keyStrokes)
+    sendKeyStrokes(TATASKY_REMOTE_NAME, keyStrokes)
