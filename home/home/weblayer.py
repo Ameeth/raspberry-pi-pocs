@@ -151,8 +151,8 @@ def led_switchoff():
 
 @app.route('/switch-channel/<channelno>')
 def switch_channel(channelno):
-    app.logger.info("Channel Switch Called " + channelno)
-    remote.goto_channel(channelno)
+    app.logger.info("Channel Switch Called " + str(channelno))
+    remote.goto_channel(str(channelno))
     if(len(RECENT_CHANNELS) >= 5):
         RECENT_CHANNELS.pop()
 
@@ -196,12 +196,15 @@ def tv_go_back():
 
 def change_channel_by_name(name):
     db = get_db()
-    placeholder= '?' # For SQLite. See DBAPI paramstyle.
-    query= 'select channel_no from tv_channel where channel_name = %s'  % placeholders
-    cur = db.execute(query, name)
+    app.logger.info("Finding the channel :")
+    app.logger.info(name)
+    query= 'select channel_no from tv_channel where channel_name = ?'
+    cur = db.execute(query, [name])
     entries = cur.fetchall()
-    listoflist = []
-    switch_channel(entries[0][0])
+    app.logger.info(entries)
+    app.logger.info(entries[0])
+    return switch_channel(entries[0][0])
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
@@ -216,17 +219,25 @@ def webhook():
 def processRequest(req):
     parameters = req.get("result").get("parameters")
     app.logger.info("Got parameters :")
-    app.logger.info(json.dumps(parameters, indent=4))
-    if parameters.get("device") == "tv":
+    app.logger.info(json.dumps(req.get("result"), indent=4))
+    if parameters.get("device") == "TV":
         operation = parameters.get("operation")
+        app.logger.info("Got operation :"+operation)
         if operation == "switch off":
             return makeWebhookResult(tv_onoff())
-        elif operation == "mute" :
+        elif operation == "mute" or operation == "unmute" :
             return makeWebhookResult(tv_mute())
+        elif operation == "volume up":
+            return makeWebhookResult(tv_volumeup())
+        elif operation == "volume down":
+            return makeWebhookResult(tv_volumedown())
         elif operation == "switch on":
+            app.logger.info("Got channel :"+ str(parameters.get("channel")))
             if parameters.get("channel") is None or not parameters.get("channel"):
                 return makeWebhookResult(tv_onoff())
             else :
+                app.logger.info("Got channel name  :")
+                app.logger.info(parameters.get("channel"))
                 return makeWebhookResult(change_channel_by_name(parameters.get("channel")))
     return {}
 
