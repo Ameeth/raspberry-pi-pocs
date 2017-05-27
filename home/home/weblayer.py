@@ -210,15 +210,19 @@ def webhook():
     return r
 
 def processRequest(req):
-    if req.get("result").get("action") != "switch-on-tv":
-        return {}
-    res = makeWebhookResult(tv_onoff())
-    return res
+    parameters = req.get("result").get("parameters")
+    if parameters.get("device") == "tv":
+        operation = parameters.get("operation")
+        if operation == "switch on" or operation == "switch off":
+            return makeWebhookResult(tv_onoff())
+        if operation == "mute" :
+            return makeWebhookResult(tv_mute())
+    return {}
 
 def makeWebhookResult(data):
     # print(json.dumps(item, indent=4))
 
-    speech = "Switching on the tv"
+    speech = "Here you go"
 
     app.logger.info("Response:")
     app.logger.info(speech)
