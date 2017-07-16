@@ -24,7 +24,7 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'home.db')
 ))
 
-logHandler = logging.FileHandler('home_automation.log')
+logHandler = logging.FileHandler(app.config['LOG_FILE'])
 logHandler.setLevel(logging.INFO)
 app.logger.addHandler(logHandler)
 app.logger.setLevel(logging.INFO)
